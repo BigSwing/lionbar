@@ -1,6 +1,9 @@
 (function($){
 	$.fn.lionbar = function(options){
-		var settings = $.extend({}, options);
+		var settings = $.extend({
+			always_show_scrollbars: false,
+			scrollspeed: 30
+		}, options);
 		var methods = {
 			normalize_scroll: function(event){
 				var normalized = {
@@ -44,8 +47,7 @@
 				event.stopImmediatePropagation();
 
 				var deltas = methods.normalize_scroll(event);
-				var move = deltas.deltaY * 30;
-				console.log(move);
+				var move = deltas.deltaY * settings.scrollspeed;
 				var top = parseInt($(this).children('.lionbar-inner').css('top')) + move;
 
 				if(top > 0){
@@ -65,12 +67,14 @@
 
 			handle_touch_start: function(event){
 				event.preventDefault();
-				event.stopImmediatePropagation();
 				var touchdata = {
 					innerY: 0,
 					innerX: 0,
 					doing_drag: true
 				};
+				if(!settings.always_show_scrollbars){
+					$(this).siblings('.lionbar-scroller').fateTo('slow', 0.5);
+				}
 				var poffset = $(this).parent('.lionbar').offset();
 				var touch = event.originalEvent.touches[0];
 				touchdata.innerY = Math.abs(parseInt($(this).css('top'))) + (touch.pageY - poffset.top);
@@ -112,7 +116,9 @@
 
 			handle_touch_end: function(event){
 				event.preventDefault();
-				event.stopImmediatePropagation();
+				if(!settings.always_show_scrollbars){
+					$(this).siblings('.lionbar-scroller').fadeOut('slow');
+				}
 				$(this).data('lionbar', {
 					innerY: 0,
 					innerX: 0,
@@ -121,7 +127,7 @@
 			}
 		};
 		return this.each(function(){
-			$this = $(this);
+			var $this = $(this);
 
 			// setup container
 			$this.addClass('lionbar').css({position: 'relative', overflow: 'hidden'}).wrapInner('<div class="lionbar-inner"></div>').append('<div class="lionbar-scroller"></div>');
@@ -133,21 +139,31 @@
 			var scroller_height = $this.height() > $this.find('.lionbar-inner').height() ? 0 : ($this.height() / $this.find('.lionbar-inner').height()) * $this.height();
 			$this.children('.lionbar-scroller').css({position: 'absolute', top: 0, right: 0, height: scroller_height, backgroundColor: '#000', opacity: 0.5, width: '3px'}).attr('style', $this.children('.lionbar-scroller').attr('style')+'border-radius: 3px;');
 
+			if(!settings.always_show_scrollbars){
+				$this.children('.lionbar-scroller').fadeOut();
+			}
+
 			// events
 			$this.hover(function(){
-				$(this).children('.lionbar-scroller').fadeTo('slow', 0.5);
-				$(this).bind('mousewheel DOMMouseScroll', methods.handle_mousewheel);
-				$(this).bind('touchstart', methods.handle_touch_start);
-				$(this).bind('touchmove', methods.handle_touch_move);
-				$(this).bind('touchend', methods.handle_touch_end);
+				var $this = $(this);
+				if(!settings.always_show_scrollbars){
+					$this.children('.lionbar-scroller').fadeTo('slow', 0.5);
+				}
+				$this.bind('mousewheel DOMMouseScroll', methods.handle_mousewheel);
+				$this.bind('touchstart', methods.handle_touch_start);
+				$this.bind('touchmove', methods.handle_touch_move);
+				$this.bind('touchend', methods.handle_touch_end);
 			}, function(){
-				$(this).children('.lionbar-scroller').fadeOut('slow');
-				$(this).unbind('mousewheel touchstart touchmove touchend');
+				var $this = $(this);
+				if(!settings.always_show_scrollbars){
+					$this.children('.lionbar-scroller').fadeOut('slow');
+				}
+				$this.unbind('mousewheel touchstart touchmove touchend');
 			});
 
-			$(this).children('.lionbar-inner').bind('touchstart', methods.handle_touch_start);
-			$(this).children('.lionbar-inner').bind('touchmove', methods.handle_touch_move);
-			$(this).children('.lionbar-inner').bind('touchend', methods.handle_touch_end);
+			$this.children('.lionbar-inner').bind('touchstart', methods.handle_touch_start);
+			$this.children('.lionbar-inner').bind('touchmove', methods.handle_touch_move);
+			$this.children('.lionbar-inner').bind('touchend', methods.handle_touch_end);
 		});
 	}
 })(jQuery);
