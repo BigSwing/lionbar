@@ -28,7 +28,7 @@
 					position: 'absolute',
 					left: 0,
 					top: 0,
-					paddingRight: '26px'
+					paddingRight: '3px'
 				});
 
 				// setup scroll bar
@@ -41,9 +41,10 @@
 					top: 0,
 					right: 0,
 					height: scroller_height,
-					backgroundColor: '#006987',
-					opacity: 0.75,
-					width: '16px'
+					backgroundColor: '#000',
+					opacity: 0.5,
+					width: '3px',
+					borderRadius: '3px'
 				});
 
 				if (!settings.always_show_scrollbars) {
