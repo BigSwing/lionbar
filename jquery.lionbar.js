@@ -279,7 +279,7 @@
 			$this.hover(function() {
 				mouseover = true;
 				if ( !settings.always_show_scrollbars ) {
-					$scroller.fadeTo( 'slow', 0.75 );
+					$scroller.fadeTo( 'slow', 0.5 );
 				}
 				if(attach_events){
 					$this.bind( 'mousewheel DOMMouseScroll', methods.handle_mousewheel );
@@ -306,7 +306,7 @@
 					} );
 					if( attach_events && mouseover ){
 						if ( !settings.always_show_scrollbars ) {
-							$scroller.fadeTo( 'slow', 0.75 );
+							$scroller.fadeTo( 'slow', 0.5 );
 						}
 						$this.bind( 'mousewheel DOMMouseScroll', methods.handle_mousewheel );
 						$this.bind( 'touchstart', methods.handle_touch_start );
